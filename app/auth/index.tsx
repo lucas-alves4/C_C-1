@@ -47,12 +47,9 @@ export default function AuthScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
             <Image
-              source={{
-                uri: 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'
-              }}
-              style={styles.logo}
-            />
-            <Text style={styles.title}>MontaFácil</Text>
+  source={require('../../assets/images/logo.png')}
+  style={styles.logo}
+/>
             <Text style={styles.subtitle}>
               {isLogin ? 'Entre na sua conta' : 'Crie sua conta'}
             </Text>
@@ -192,9 +189,8 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   logo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 335,
+    height: 322,
     marginBottom: 16,
   },
   title: {
