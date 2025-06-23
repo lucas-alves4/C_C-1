@@ -20,7 +20,7 @@ interface Message {
   text: string;
   sender: 'user' | 'professional';
   timestamp: Date;
-  type?: 'text' | 'image';
+  type?: 'text' | 'imag';
   imageUri?: string;
 }
 
