@@ -9,17 +9,21 @@ import {
   Platform,
   ScrollView,
   Image,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User, Mail, Lock, Phone, MapPin } from 'lucide-react-native';
 
+const API_URL = 'http://localhost:3000/api'; // Mude para seu IP se usar dispositivo físico
 type UserType = 'client' | 'professional';
 
 export default function AuthScreen() {
   const [isLogin, setIsLogin] = useState(true);
   const [userType, setUserType] = useState<UserType>('client');
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -28,9 +32,38 @@ export default function AuthScreen() {
     location: '',
   });
 
-  const handleAuth = () => {
-    // Simulate authentication
-    router.replace('/(tabs)');
+  const handleAuth = async () => {
+    setLoading(true);
+    const endpoint = isLogin ? '/login' : '/register';
+    const body = isLogin
+      ? { email: formData.email, password: formData.password }
+      : { ...formData, userType };
+
+    try {
+      const response = await fetch(`${API_URL}${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Ocorreu um erro.');
+      }
+      
+      if (isLogin) {
+        // TODO: Salvar o token (data.accessToken) de forma segura
+        router.replace('/(tabs)');
+      } else {
+        Alert.alert('Sucesso!', 'Sua conta foi criada. Por favor, faça o login.');
+        setIsLogin(true);
+      }
+    } catch (error: any) {
+      Alert.alert('Erro', error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const updateFormData = (field: string, value: string) => {
@@ -47,9 +80,9 @@ export default function AuthScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
             <Image
-  source={require('../../assets/images/logo.png')}
-  style={styles.logo}
-/>
+              source={require('../../assets/images/logo.png')}
+              style={styles.logo}
+            />
             <Text style={styles.subtitle}>
               {isLogin ? 'Entre na sua conta' : 'Crie sua conta'}
             </Text>
@@ -137,7 +170,6 @@ export default function AuthScreen() {
                     keyboardType="phone-pad"
                   />
                 </View>
-
                 <View style={styles.inputContainer}>
                   <MapPin color="#64748B" size={20} />
                   <TextInput
@@ -150,10 +182,11 @@ export default function AuthScreen() {
               </>
             )}
 
-            <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+            <TouchableOpacity style={styles.authButton} onPress={handleAuth} disabled={loading}>
+              {loading ? <ActivityIndicator color="#FFFFFF" /> : 
               <Text style={styles.authButtonText}>
                 {isLogin ? 'Entrar' : 'Criar Conta'}
-              </Text>
+              </Text>}
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -171,6 +204,7 @@ export default function AuthScreen() {
   );
 }
 
+// OS ESTILOS PERMANECEM OS MESMOS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
