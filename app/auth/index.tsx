@@ -1,23 +1,14 @@
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Image,
-  Alert,
-  ActivityIndicator
+  View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView,
+  Platform, ScrollView, Image, Alert, ActivityIndicator
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { User, Mail, Lock, Phone, MapPin } from 'lucide-react-native';
+import { API_URL } from '../apiConfig'; // <-- A mudança principal está aqui
 
-const API_URL = 'http://localhost:3000/api'; // Mude para seu IP se usar dispositivo físico
 type UserType = 'client' | 'professional';
 
 export default function AuthScreen() {
@@ -33,6 +24,10 @@ export default function AuthScreen() {
   });
 
   const handleAuth = async () => {
+    if (!formData.email || !formData.password) {
+        Alert.alert('Erro', 'Email e senha são obrigatórios.');
+        return;
+    }
     setLoading(true);
     const endpoint = isLogin ? '/login' : '/register';
     const body = isLogin
@@ -49,18 +44,18 @@ export default function AuthScreen() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Ocorreu um erro.');
+        throw new Error(data.message || 'Ocorreu um erro de rede.');
       }
       
       if (isLogin) {
-        // TODO: Salvar o token (data.accessToken) de forma segura
+        // No futuro, você salvará o token `data.accessToken` aqui
         router.replace('/(tabs)');
       } else {
         Alert.alert('Sucesso!', 'Sua conta foi criada. Por favor, faça o login.');
         setIsLogin(true);
       }
     } catch (error: any) {
-      Alert.alert('Erro', error.message);
+      Alert.alert('Erro de Rede', `Não foi possível conectar ao servidor. Verifique seu IP em apiConfig.ts e se o servidor está rodando. \n\nDetalhes: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -161,148 +156,4 @@ export default function AuthScreen() {
             {!isLogin && (
               <>
                 <View style={styles.inputContainer}>
-                  <Phone color="#64748B" size={20} />
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Telefone"
-                    value={formData.phone}
-                    onChangeText={(value) => updateFormData('phone', value)}
-                    keyboardType="phone-pad"
-                  />
-                </View>
-                <View style={styles.inputContainer}>
-                  <MapPin color="#64748B" size={20} />
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Cidade"
-                    value={formData.location}
-                    onChangeText={(value) => updateFormData('location', value)}
-                  />
-                </View>
-              </>
-            )}
-
-            <TouchableOpacity style={styles.authButton} onPress={handleAuth} disabled={loading}>
-              {loading ? <ActivityIndicator color="#FFFFFF" /> : 
-              <Text style={styles.authButtonText}>
-                {isLogin ? 'Entrar' : 'Criar Conta'}
-              </Text>}
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.switchModeButton}
-              onPress={() => setIsLogin(!isLogin)}
-            >
-              <Text style={styles.switchModeText}>
-                {isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Entre'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-}
-
-// OS ESTILOS PERMANECEM OS MESMOS
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    padding: 24,
-  },
-  header: {
-    alignItems: 'center',
-    marginBottom: 32,
-    marginTop: 40,
-  },
-  logo: {
-    width: 114.2,
-    height: 110,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontFamily: 'Inter-Bold',
-    color: '#1E293B',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#64748B',
-    textAlign: 'center',
-  },
-  userTypeSelector: {
-    flexDirection: 'row',
-    backgroundColor: '#F1F5F9',
-    borderRadius: 12,
-    padding: 4,
-    marginBottom: 24,
-  },
-  userTypeButton: {
-    flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
-    borderRadius: 8,
-  },
-  userTypeButtonActive: {
-    backgroundColor: '#2563EB',
-  },
-  userTypeText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#64748B',
-  },
-  userTypeTextActive: {
-    color: '#FFFFFF',
-  },
-  form: {
-    gap: 16,
-  },
-  inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 4,
-    borderWidth: 1,
-    borderColor: '#E2E8F0',
-  },
-  input: {
-    flex: 1,
-    fontSize: 16,
-    fontFamily: 'Inter-Regular',
-    color: '#1E293B',
-    paddingVertical: 16,
-    paddingLeft: 12,
-  },
-  authButton: {
-    backgroundColor: '#2563EB',
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  authButtonText: {
-    fontSize: 16,
-    fontFamily: 'Inter-SemiBold',
-    color: '#FFFFFF',
-  },
-  switchModeButton: {
-    alignItems: 'center',
-    marginTop: 16,
-  },
-  switchModeText: {
-    fontSize: 14,
-    fontFamily: 'Inter-Medium',
-    color: '#2563EB',
-  },
-});
+                  <Phone color="#64748B"
