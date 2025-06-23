@@ -24,10 +24,10 @@ export default function AuthScreen() {
     const body = isLogin ? { email: formData.email, password: formData.password } : { ...formData, userType };
 
     try {
-      const response = await fetch(`<span class="math-inline">\{API\_URL\}</span>{endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const response = await fetch(`${API_URL}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Ocorreu um erro.');
-
+      
       if (isLogin) {
         router.replace('/(tabs)');
       } else {
@@ -48,35 +48,24 @@ export default function AuthScreen() {
       <StatusBar style="dark" />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.header}>
-            <Image source={require('../../assets/images/logo.png')} style={styles.logo} />
-            <Text style={styles.subtitle}>{isLogin ? 'Entre na sua conta' : 'Crie sua conta'}</Text>
-          </View>
+          <View style={styles.header}><Image source={require('../../assets/images/logo.png')} style={styles.logo} /><Text style={styles.subtitle}>{isLogin ? 'Entre na sua conta' : 'Crie sua conta'}</Text></View>
           {!isLogin && (
             <View style={styles.userTypeSelector}>
-              <TouchableOpacity style={[styles.userTypeButton, userType === 'client' && styles.userTypeButtonActive]} onPress={() => setUserType('client')}>
-                <Text style={[styles.userTypeText, userType === 'client' && styles.userTypeTextActive]}>Cliente</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={[styles.userTypeButton, userType === 'professional' && styles.userTypeButtonActive]} onPress={() => setUserType('professional')}>
-                <Text style={[styles.userTypeText, userType === 'professional' && styles.userTypeTextActive]}>Profissional</Text>
-              </TouchableOpacity>
+              <TouchableOpacity style={[styles.userTypeButton, userType === 'client' && styles.userTypeButtonActive]} onPress={() => setUserType('client')}><Text style={[styles.userTypeText, userType === 'client' && styles.userTypeTextActive]}>Cliente</Text></TouchableOpacity>
+              <TouchableOpacity style={[styles.userTypeButton, userType === 'professional' && styles.userTypeButtonActive]} onPress={() => setUserType('professional')}><Text style={[styles.userTypeText, userType === 'professional' && styles.userTypeTextActive]}>Profissional</Text></TouchableOpacity>
             </View>
           )}
           <View style={styles.form}>
-            {!isLogin && (
-              <View style={styles.inputContainer}><User color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Nome completo" value={formData.name} onChangeText={(value) => updateFormData('name', value)} autoCapitalize="words" /></View>
-            )}
-            <View style={styles.inputContainer}><Mail color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Email" value={formData.email} onChangeText={(value) => updateFormData('email', value)} keyboardType="email-address" autoCapitalize="none" /></View>
-            <View style={styles.inputContainer}><Lock color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Senha" value={formData.password} onChangeText={(value) => updateFormData('password', value)} secureTextEntry /></View>
+            {!isLogin && (<View style={styles.inputContainer}><User color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Nome completo" value={formData.name} onChangeText={(v) => updateFormData('name', v)} autoCapitalize="words" /></View>)}
+            <View style={styles.inputContainer}><Mail color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Email" value={formData.email} onChangeText={(v) => updateFormData('email', v)} keyboardType="email-address" autoCapitalize="none" /></View>
+            <View style={styles.inputContainer}><Lock color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Senha" value={formData.password} onChangeText={(v) => updateFormData('password', v)} secureTextEntry /></View>
             {!isLogin && (
               <>
-                <View style={styles.inputContainer}><Phone color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Telefone" value={formData.phone} onChangeText={(value) => updateFormData('phone', value)} keyboardType="phone-pad" /></View>
-                <View style={styles.inputContainer}><MapPin color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Cidade" value={formData.location} onChangeText={(value) => updateFormData('location', value)} /></View>
+                <View style={styles.inputContainer}><Phone color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Telefone" value={formData.phone} onChangeText={(v) => updateFormData('phone', v)} keyboardType="phone-pad" /></View>
+                <View style={styles.inputContainer}><MapPin color="#64748B" size={20} /><TextInput style={styles.input} placeholder="Cidade" value={formData.location} onChangeText={(v) => updateFormData('location', v)} /></View>
               </>
             )}
-            <TouchableOpacity style={styles.authButton} onPress={handleAuth} disabled={loading}>
-              {loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.authButtonText}>{isLogin ? 'Entrar' : 'Criar Conta'}</Text>}
-            </TouchableOpacity>
+            <TouchableOpacity style={styles.authButton} onPress={handleAuth} disabled={loading}>{loading ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.authButtonText}>{isLogin ? 'Entrar' : 'Criar Conta'}</Text>}</TouchableOpacity>
             <TouchableOpacity style={styles.switchModeButton} onPress={() => setIsLogin(!isLogin)}><Text style={styles.switchModeText}>{isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Entre'}</Text></TouchableOpacity>
           </View>
         </ScrollView>
@@ -84,12 +73,13 @@ export default function AuthScreen() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#FFFFFF' },
   keyboardView: { flex: 1 },
   scrollContent: { flexGrow: 1, padding: 24, justifyContent: 'center' },
   header: { alignItems: 'center', marginBottom: 32 },
-  logo: { width: 114.2, height: 110, marginBottom: 16 },
+  logo: { width: 114.2, height: 110, marginBottom: 16, resizeMode: 'contain' },
   subtitle: { fontSize: 16, fontFamily: 'Inter-Regular', color: '#64748B', textAlign: 'center' },
   userTypeSelector: { flexDirection: 'row', backgroundColor: '#F1F5F9', borderRadius: 12, padding: 4, marginBottom: 24 },
   userTypeButton: { flex: 1, paddingVertical: 12, alignItems: 'center', borderRadius: 8 },

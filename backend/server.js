@@ -51,9 +51,7 @@ async function initializeServer() {
         if (isMatch) {
             const accessToken = jwt.sign({ id: user.id, name: user.name, type: user.user_type }, JWT_SECRET, { expiresIn: '24h' });
             res.json({ accessToken, user: { id: user.id, name: user.name, email: user.email } });
-        } else {
-            res.status(401).json({ message: 'Senha Incorreta.' });
-        }
+        } else { res.status(401).json({ message: 'Senha Incorreta.' }); }
     } catch (err){ res.status(500).json({ message: 'Ocorreu um erro interno no login.', error: err.message }); }
   });
 
@@ -63,7 +61,6 @@ async function initializeServer() {
     try {
         const user = await db.get('SELECT * FROM Users WHERE id = ?', [id]);
         if (!user) return res.status(404).json({ message: "Usuário não encontrado" });
-
         let stats;
         if (user.user_type === 'professional') {
              stats = await db.get(`SELECT (SELECT COUNT(*) FROM Services WHERE professional_id = ?) as servicesCount, (SELECT AVG(rating) FROM Reviews WHERE professional_id = ?) as avgRating, (SELECT COUNT(*) FROM Reviews WHERE professional_id = ?) as reviewsCount`, [id, id, id]);

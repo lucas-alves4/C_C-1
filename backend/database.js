@@ -33,11 +33,6 @@ async function setupDatabase() {
       `INSERT INTO Users (name, email, password, user_type, location, avatar) VALUES (?, ?, ?, ?, ?, ?)`,
       ['João Silva (Teste)', 'joao.silva@teste.com', hashedPassword, 'professional', 'São Paulo, SP', 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=150&h=150&dpr=2']
     );
-    const professionalId = professionalResult.lastID;
-    await db.run(
-        `INSERT INTO Services (client_id, professional_id, title, date, time, location, price, status, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [1, professionalId, 'Montagem de Guarda-roupa', '15 Jan', '14:00', 'Rua das Flores, 123', 120, 'confirmed', 'https://images.pexels.com/photos/6474471/pexels-photo-6474471.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=2']
-    );
   }
 
   console.log('Banco de dados configurado com sucesso.');
