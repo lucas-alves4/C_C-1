@@ -32,11 +32,20 @@ export default function RootLayout() {
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="auth" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="professional-profile" options={{ headerShown: false }} />
-        <Stack.Screen name="service-request" options={{ headerShown: false }} />
-        <Stack.Screen name="booking" options={{ headerShown: false }} />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
         <Stack.Screen name="review" options={{ headerShown: false }} />
+        <Stack.Screen name="service-request" options={{ headerShown: false }} />
+        
+        {/* NOVAS TELAS ADICIONADAS AQUI */}
+        <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+        <Stack.Screen name="settings" options={{ headerShown: false }} />
+        <Stack.Screen name="privacy" options={{ headerShown: false }} />
+        <Stack.Screen name="addresses" options={{ headerShown: false }} />
+        <Stack.Screen name="payment-methods" options={{ headerShown: false }} />
+        <Stack.Screen name="my-reviews" options={{ headerShown: false }} />
+        <Stack.Screen name="help" options={{ headerShown: false }} />
+        
+        {/* Tela de 'Não Encontrado' fica por último */}
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
